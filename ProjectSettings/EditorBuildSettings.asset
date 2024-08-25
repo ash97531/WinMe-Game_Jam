@@ -6,12 +6,15 @@ EditorBuildSettings:
   serializedVersion: 2
   m_Scenes:
   - enabled: 1
-    path: Assets/Scenes/MirrorAys/MirrorWaitingRoom.unity
+    path: Assets/Scenes/MirrorAys/OfflineScene.unity
+    guid: fcb4b4d674492ad4ca47aefb0e240387
+  - enabled: 1
+    path: Assets/Scenes/MirrorAys/LobbyWaitingRoom.unity
     guid: c083190a503a1514bac3a09c5247ce98
   - enabled: 1
-    path: Assets/Scenes/MirrorAys/MirrorCloverStadium.unity
+    path: Assets/Scenes/MirrorAys/Room1.unity
     guid: 38db18a9ff612794db61e74977a3c288
   - enabled: 1
-    path: Assets/Scenes/MirrorAys/MirrorCloverStadium1.unity
+    path: Assets/Scenes/MirrorAys/Room2.unity
     guid: 1105c4e18c6704c43bb9c2e9f9eacd07
   m_configObjects: {}

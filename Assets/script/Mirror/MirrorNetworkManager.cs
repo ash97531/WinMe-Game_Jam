@@ -11,7 +11,7 @@ using Unity.Mathematics;
 public class MirrorNetworkManager : NetworkManager
 {
     private int playerCount = 0;
-    public int noOfPlayers = 1;
+    public int maxPlayerCount = 1;
 
 
     /// <lobby>
@@ -21,6 +21,7 @@ public class MirrorNetworkManager : NetworkManager
     private bool subScenesLoaded;
     private readonly List<Scene> subScene = new List<Scene>();
 
+    private List<NetworkConnectionToClient> networkConnectionToClientsList = new List<NetworkConnectionToClient>();
     private bool isInTransition;
     private bool isLoadingScene =false;
     private bool firstSceneLoaded;
@@ -32,31 +33,31 @@ public class MirrorNetworkManager : NetworkManager
 
 
         /// <lobby>
-        int sceneCount = SceneManager.sceneCountInBuildSettings - 1;
+        int sceneCount = SceneManager.sceneCountInBuildSettings - 2;
         sceneToLoad = new string[sceneCount];
 
         for(int i =0 ;i < sceneCount ; i++){
-            sceneToLoad[i] = Path.GetFileNameWithoutExtension(SceneUtility.GetScenePathByBuildIndex(i+1)); 
+            sceneToLoad[i] = Path.GetFileNameWithoutExtension(SceneUtility.GetScenePathByBuildIndex(i+2)); 
         }
         /// </lobby>
     }
 
     /// <lobby>
 
-    public override void OnServerSceneChanged(string sceneName)
-    {
-        isLoadingScene = true;
-        base.OnServerSceneChanged(sceneName);
+    // public override void OnServerSceneChanged(string sceneName)
+    // {
+    //     isLoadingScene = true;
+    //     base.OnServerSceneChanged(sceneName);
 
-        if(fadeInOut !=null)
-            fadeInOut.ShowScreenNoDelay();
-        else
-            Debug.LogError("Fade in out not found -- object missing");
+    //     if(fadeInOut !=null)
+    //         fadeInOut.ShowScreenNoDelay();
+    //     else
+    //         Debug.LogError("Fade in out not found -- object missing");
 
-        if(sceneName == "MirrorCloverStadium"){
-            StartCoroutine(ServerLoadSubScenes());
-        }
-    }
+    //     if(sceneName == "LobbyWaitingRoom"){
+    //         StartCoroutine(ServerLoadSubScenes());
+    //     }
+    // }
 
     public override void OnClientSceneChanged()
     {
@@ -149,6 +150,32 @@ public class MirrorNetworkManager : NetworkManager
         NetworkServer.AddPlayerForConnection(conn , player);
             
     }
+
+    IEnumerator AddPlayerDelayed1(NetworkConnectionToClient conn){
+        Vector3 start = new Vector3(0, 40f, 0);
+        GameObject player = Instantiate(playerPrefab , start , quaternion.identity);
+
+        yield return new WaitForEndOfFrame();
+        NetworkServer.AddPlayerForConnection(conn , player);
+
+        networkConnectionToClientsList.Add(conn);
+
+        if(networkConnectionToClientsList.Count == maxPlayerCount){
+            isLoadingScene = true;
+
+            if(fadeInOut !=null)
+                fadeInOut.ShowScreenNoDelay();
+            else
+                Debug.LogError("Fade in out not found -- object missing");
+                
+            Debug.Log(SceneManager.GetActiveScene().name);
+            
+            if(SceneManager.GetActiveScene().name == "OfflineScene"){
+                StartCoroutine(ServerLoadSubScenes());
+            }   
+        }
+            
+    }
     /// </lobby>
 
     public override void OnServerConnect(NetworkConnectionToClient conn)
@@ -164,15 +191,9 @@ public class MirrorNetworkManager : NetworkManager
 
         /// <lobby>
         if(conn.identity == null){
-            Debug.Log("---------------------");
-
-            // Vector3 start = new Vector3(0, 40f, 0);
-            // GameObject player = Instantiate(playerPrefab, start, Quaternion.identity);
-            // NetworkServer.AddPlayerForConnection(conn, player);
-
-            if(!isLoadingScene)  LoadGameScene();
-            // AddPlayerDelayed(conn);
-            StartCoroutine(AddPlayerDelayed(conn));
+            // if(!isLoadingScene)  LoadGameScene();
+            this.gameObject.GetComponentInChildren<Canvas>().enabled = false;
+            StartCoroutine(AddPlayerDelayed1(conn));
         }
         /// </lobby>
     }
@@ -220,7 +241,7 @@ public class MirrorNetworkManager : NetworkManager
     [Server]
     private void LoadGameScene()
     {
-        string newSceneName = "MirrorCloverStadium"; // Replace with your scene name
+        string newSceneName = "LobbyWaitingRoom"; // Replace with your scene name
         ServerChangeScene(newSceneName);
     }
 
