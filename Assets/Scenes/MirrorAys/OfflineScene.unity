@@ -8561,7 +8561,7 @@ MonoBehaviour:
   sendRate: 60
   autoStartServerBuild: 0
   autoConnectClientBuild: 0
-  offlineScene: Assets/Scenes/MirrorAys/MirrorWaitingRoom.unity
+  offlineScene: Assets/Scenes/MirrorAys/OfflineScene.unity
   onlineScene: 
   transport: {fileID: 1945648345}
   networkAddress: localhost
@@ -8592,9 +8592,9 @@ MonoBehaviour:
   evaluationMethod: 0
   evaluationInterval: 3
   timeInterpolationGui: 0
-  noOfPlayers: 2
+  noOfPlayers: 1
   fadeInOut: {fileID: 183715452}
-  firstSceneToLoad: MirrorCloverStadium
+  firstSceneToLoad: MirrorWaitingRoom
 --- !u!114 &1945648348
 MonoBehaviour:
   m_ObjectHideFlags: 0
